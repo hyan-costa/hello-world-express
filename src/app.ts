@@ -1,20 +1,19 @@
-import express from 'express';
-import { Client } from 'pg';
-import dotenv from 'dotenv';
-import morgan from 'morgan';
-import userRoutes from './routers/userRouters'; // certifique-se que o caminho está correto
+import express from "express";
+import { Client } from "pg";
+import dotenv from "dotenv";
+import morgan from "morgan";
+import userRoutes from "./routers/userRouters"; // certifique-se que o caminho está correto
+import cors from "cors";
 
-// Carregar as variáveis de ambiente
 dotenv.config();
 
 const app = express();
 const port = 3000;
 
-// Middlewares
-app.use(morgan('dev'));
-app.use(express.json()); // importante se for receber JSON no body
+app.use(morgan("dev"));
+app.use(express.json());
+app.use(cors());
 
-// Configuração do banco de dados PostgreSQL
 const client = new Client({
   host: process.env.PG_HOST,
   port: parseInt(process.env.PG_PORT as string),
@@ -25,23 +24,22 @@ const client = new Client({
 
 client.connect();
 
-// Rota simples para teste
-app.get('/', async (req, res) => {
+app.get("/", async (req, res) => {
   try {
-    const result = await client.query('SELECT NOW()');
+    const result = await client.query("SELECT NOW()");
     res.send(`Banco de dados conectado: ${result.rows[0].now}`);
   } catch (err) {
-    res.status(500).send('Erro ao conectar ao banco de dados');
+    res.status(500).send("Erro ao conectar ao banco de dados");
   }
 });
 
-// Suas rotas da API
-app.use('/api', userRoutes); // isso vai fazer funcionar /api/user
 
-// Inicia o servidor
+
+app.use("/api", userRoutes);
+
+
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
 });
-
 
 export default client;
