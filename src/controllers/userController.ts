@@ -1,15 +1,11 @@
-import userModel from '../models/userModel';
+import UserRepository from "../models/userDAO";
 
 const getUser = async (req: any, res: any) => {
   try {
-    console.log("dsafsdfsd");
-    
-    const user = await userModel.getUser();
-    console.log("heloooo");
-    
-    res.json(user);
+    const users = await UserRepository.getAll(); // Aqui você chama o repositório
+    res.json(users);
   } catch (err) {
-    res.status(500).send('Erro ao buscar usuário');
+    res.status(500).send("Erro ao buscar usuário");
   }
 };
 
